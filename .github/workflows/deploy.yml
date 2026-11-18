@@ -17,10 +17,11 @@ concurrency:
 
 jobs:
   deploy:
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,17 +34,17 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build
+      - name: Build website
         run: npm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload site
+      - name: Upload website
         uses: actions/upload-pages-artifact@v3
         with:
           path: "./dist"
 
-      - name: Deploy
+      - name: Deploy website
         id: deployment
         uses: actions/deploy-pages@v4
