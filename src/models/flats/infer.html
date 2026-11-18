@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Property Price Estimator</title>
+
+    <style>
+        :root {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                sans-serif;
+            color: #1f2937;
+            background: #f3f4f6;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 32px 16px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-top: 0;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            margin-bottom: 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgb(0 0 0 / 5%);
+        }
+
+        .section-title {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .fields {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        .field {
+            min-width: 0;
+        }
+
+        .field label {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .value {
+            color: #2563eb;
+            white-space: nowrap;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+
+        .range-limits {
+            display: flex;
+            justify-content: space-between;
+            color: #9ca3af;
+            font-size: 0.8rem;
+        }
+
+        .prediction-card {
+            text-align: center;
+            color: white;
+            background: #1d4ed8;
+        }
+
+        .prediction-card h2 {
+            margin: 0 0 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        #prediction {
+            font-size: clamp(2rem, 7vw, 3.5rem);
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        #status {
+            min-height: 1.5em;
+            margin: 16px 0 0;
+            color: #dbeafe;
+            font-size: 0.9rem;
+        }
+
+        .note {
+            color: #6b7280;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .fields {
+                grid-template-columns: 1fr;
+                gap: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <h1>Odhad ceny nehnuteľnosti</h1>
+
+        <p class="subtitle">
+            Upravte vlastnosti nehnuteľnosti a odhadnite jej trhovú cenu.
+        </p>
+
+        <section class="card">
+            <h2 class="section-title">Vlastnosti nehnuteľnosti</h2>
+
+            <div class="fields">
+
+                <div class="field">
+                    <label for="district">
+                        Okres
+                        <span class="value" id="district_value">Bánovce nad Bebravou</span>
+                    </label>
+                    <input id="district" type="range" min="0" max="78" step="1" value="0">
+                    <div class="range-limits">
+                        <span>0</span>
+                        <span>78</span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="rooms">
+                        Počet izieb
+                        <span class="value" id="rooms_value">3</span>
+                    </label>
+                    <input id="rooms" type="range" min="1" max="8" step="1" value="3">
+                    <div class="range-limits">
+                        <span>1</span>
+                        <span>8</span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="usable_area_m2">
+                        Úžitková plocha (m²)
+                        <span class="value" id="usable_area_m2_value">75</span>
+                    </label>
+                    <input id="usable_area_m2" type="range" min="15" max="250" step="1" value="75">
+                    <div class="range-limits">
+                        <span>15 m²</span>
+                        <span>250 m²</span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="balcony_m2">
+                        Balkón (m²)
+                        <span class="value" id="balcony_m2_value">0</span>
+                    </label>
+                    <input id="balcony_m2" type="range" min="0" max="30" step="0.5" value="0">
+                    <div class="range-limits">
+                        <span>0 m²</span>
+                        <span>30 m²</span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="loggia_m2">
+                        Loggia (m²)
+                        <span class="value" id="loggia_m2_value">0</span>
+                    </label>
+                    <input id="loggia_m2" type="range" min="0" max="30" step="0.5" value="0">
+                    <div class="range-limits">
+                        <span>0 m²</span>
+                        <span>30 m²</span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="terrace_m2">
+                        Terasa (m²)
+                        <span class="value" id="terrace_m2_value">0</span>
+                    </label>
+                    <input id="terrace_m2" type="range" min="0" max="100" step="1" value="0">
+                    <div class="range-limits">
+                        <span>0 m²</span>
+                        <span>100 m²</span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="cellar_m2">
+                        Pivnica (m²)
+                        <span class="value" id="cellar_m2_value">0</span>
+                    </label>
+                    <input id="cellar_m2" type="range" min="0" max="40" step="0.5" value="0">
+                    <div class="range-limits">
+                        <span>0 m²</span>
+                        <span>40 m²</span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="garden_m2">
+                        Záhrada (m²)
+                        <span class="value" id="garden_m2_value">0</span>
+                    </label>
+                    <input id="garden_m2" type="range" min="0" max="1000" step="10" value="0">
+                    <div class="range-limits">
+                        <span>0 m²</span>
+                        <span>1 000 m²</span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="total_floors">
+                        Počet podlaží v budove
+                        <span class="value" id="total_floors_value">8</span>
+                    </label>
+                    <input id="total_floors" type="range" min="4" max="18" step="1" value="8">
+                    <div class="range-limits">
+                        <span>1</span>
+                        <span>30</span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="material">
+                        Stavebný materiál
+                        <span class="value" id="material_value">0</span>
+                    </label>
+                    <input id="material" type="range" min="0" max="10" step="1" value="0">
+                    <div class="range-limits">
+                        <span>0</span>
+                        <span>10</span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="year_built">
+                        Rok výstavby
+                        <span class="value" id="year_built_value">2000</span>
+                    </label>
+                    <input id="year_built" type="range" min="1800" max="2026" step="1" value="2000">
+                    <div class="range-limits">
+                        <span>1800</span>
+                        <span>2026</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="card prediction-card">
+            <h2>Odhadovaná cena nehnuteľnosti</h2>
+            <div id="prediction">—</div>
+            <p id="status" role="status" aria-live="polite">
+                Inicializácia modelu...
+            </p>
+        </section>
+
+        <p class="note">
+            Tento odhad je vytvorený modelom strojového učenia a nepredstavuje
+            oficiálne ocenenie nehnuteľnosti. Výsledok závisí od kvality
+            trénovacích údajov a od vlastností nehnuteľností, ktoré sú v nich
+            zastúpené.
+        </p>
+    </main>
+
+    <script>
+        // Mapovanie číselných kódov na názvy okresov.
+        const DISTRICT_NAMES = [
+            "Bánovce nad Bebravou", // 0
+            "Banská Bystrica",     // 1
+            "Banská Štiavnica",    // 2
+            "Bardejov",             // 3
+            "Bratislava I",         // 4
+            "Bratislava II",        // 5
+            "Bratislava III",       // 6
+            "Bratislava IV",        // 7
+            "Bratislava V",         // 8
+            "Brezno",               // 9
+            "Bytča",                // 10
+            "Čadca",                // 11
+            "Detva",                // 12
+            "Dolný Kubín",          // 13
+            "Dunajská Streda",      // 14
+            "Galanta",              // 15
+            "Gelnica",              // 16
+            "Hlohovec",             // 17
+            "Humenné",              // 18
+            "Ilava",                // 19
+            "Kežmarok",             // 20
+            "Komárno",              // 21
+            "Košice I",             // 22
+            "Košice II",            // 23
+            "Košice III",           // 24
+            "Košice IV",            // 25
+            "Košice-okolie",        // 26
+            "Krupina",              // 27
+            "Kysucké Nové Mesto",   // 28
+            "Levice",               // 29
+            "Levoča",               // 30
+            "Liptovský Mikuláš",    // 31
+            "Lučenec",              // 32
+            "Malacky",              // 33
+            "Martin",               // 34
+            "Medzilaborce",         // 35
+            "Námestovo",            // 36
+            "Michalovce",            // 37
+            "Myjava",                // 38
+            "Nitra",                 // 39
+            "Nové Mesto nad Váhom", // 40
+            "Nové Zámky",            // 41
+            "Pezinok",               // 42
+            "Piešťany",              // 43
+            "Poltár",                // 44
+            "Poprad",                // 45
+            "Prešov",                // 46
+            "Prievidza",             // 47
+            "Púchov",                // 48
+            "Považská Bystrica",     // 49
+            "Revúca",                // 50
+            "Rimavská Sobota",       // 51
+            "Rožňava",               // 52
+            "Ružomberok",            // 53
+            "Sabinov",               // 54
+            "Šaľa",                  // 55
+            "Senec",                 // 56
+            "Senica",                // 57
+            "Skalica",               // 58
+            "Snina",                 // 59
+            "Sobrance",              // 60
+            "Spišská Nová Ves",      // 61
+            "Stará Ľubovňa",         // 62
+            "Stropkov",              // 63
+            "Svidník",               // 64
+            "Topoľčany",             // 65
+            "Trenčín",               // 66
+            "Trnava",                // 67
+            "Trebišov",              // 68
+            "Turčianske Teplice",    // 69
+            "Tvrdošín",              // 70
+            "Veľký Krtíš",           // 71
+            "Vranov nad Topľou",     // 72
+            "Žarnovica",             // 73
+            "Žiar nad Hronom",       // 74
+            "Žilina",                // 75
+            "Zlaté Moravce",         // 76
+            "Zvolen",                // 77
+            "Partizánske"            // 78
+        ];
+
+        // Aktualizácia zobrazenej hodnoty pri každom posuvníku.
+        document.querySelectorAll('input[type="range"]').forEach((input) => {
+            const output = document.getElementById(input.id + "_value");
+
+            function updateValue() {
+                if (!output) return;
+
+                if (input.id === "district") {
+                    // Zobraziť názov okresu namiesto číselného kódu.
+                    output.textContent =
+                        DISTRICT_NAMES[Number(input.value)] ?? input.value;
+                } else {
+                    // Ostatné posuvníky zobrazujú svoje číselné hodnoty.
+                    output.textContent = input.value;
+                }
+            }
+
+            input.addEventListener("input", updateValue);
+            updateValue();
+        });
+    </script>
+
+    <script src="./dist/bundle.js"></script>
+</body>
+
+</html>
