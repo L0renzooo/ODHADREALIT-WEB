@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand: #4b296b;
+  --color-brand-2: #4c2c72;
+  --color-brand-deep: #2d1842;
+  --color-brand-soft: #f3eef8;
+  --color-olive: #77867f;
+  --color-sage: #87b37a;
+  --color-lime: #9ce37d;
+  --color-lime-strong: #8ad468;
+  --color-lime-soft: #eef9e8;
+  --color-lime-ink: #3d6b2c;
+  --color-ink: #23182d;
+  --color-muted: #626a64;
+  --color-line: #dfe6dc;
+  --color-surface: #f5f8f2;
+  --color-danger: #b4232f;
+  --color-danger-soft: #fdf0f1;
+
+  --radius-hero: 36px;
+  --radius-card: 24px;
+  --radius-inner: 16px;
+
+  --shadow-card: 0 1px 2px rgb(35 24 45 / 0.04), 0 12px 32px -18px rgb(35 24 45 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(35 24 45 / 0.04), 0 28px 60px -28px rgb(35 24 45 / 0.32);
+  --shadow-device: 0 50px 90px -40px rgb(20 10 30 / 0.65), 0 18px 36px -18px rgb(20 10 30 / 0.45);
+
+  --text-display: clamp(2.5rem, 1.6rem + 3.6vw, 4.75rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.035em;
+  --text-title: clamp(2rem, 1.35rem + 2.5vw, 3.6rem);
+  --text-title--line-height: 1.06;
+  --text-title--letter-spacing: -0.03em;
+  --text-subtitle: clamp(1.4rem, 1.15rem + 1vw, 2.1rem);
+  --text-subtitle--line-height: 1.15;
+  --text-subtitle--letter-spacing: -0.02em;
+  --text-lead: clamp(1.02rem, 0.96rem + 0.3vw, 1.2rem);
+  --text-lead--line-height: 1.6;
+
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 9s ease-in-out infinite;
+  --animate-rise: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-draw: draw 1.8s cubic-bezier(0.4, 0, 0.2, 1) both;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 4.75rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: #fff;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: var(--color-lime);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-brand);
+    outline-offset: 3px;
+    border-radius: 10px;
+  }
+  .on-dark :focus-visible,
+  .on-dark:focus-visible {
+    outline-color: var(--color-lime);
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  dialog::backdrop {
+    background: rgb(35 24 45 / 0.5);
+    backdrop-filter: blur(4px);
+  }
+}
+
+@utility container-site {
+  width: 100%;
+  max-width: calc(1356px + 2 * 32px);
+  margin-inline: auto;
+  padding-inline: 16px;
+  @media (min-width: 640px) {
+    padding-inline: 24px;
+  }
+  @media (min-width: 1024px) {
+    padding-inline: 32px;
+  }
+}
+
+@utility section-y {
+  padding-block: 48px;
+  @media (min-width: 640px) {
+    padding-block: 64px;
+  }
+  @media (min-width: 1024px) {
+    padding-block: 96px;
+  }
+}
+
+@utility bg-hero {
+  background-color: var(--color-brand);
+  background-image:
+    radial-gradient(120% 90% at 85% 10%, rgb(156 227 125 / 0.18) 0%, transparent 55%),
+    radial-gradient(80% 70% at 10% 100%, rgb(45 24 66 / 0.55) 0%, transparent 60%),
+    linear-gradient(110deg, #4b296b 0%, #4c2c72 35%, #77867f 75%, #87b37a 100%);
+}
+
+@utility bg-hero-soft {
+  background-color: var(--color-brand);
+  background-image:
+    radial-gradient(70% 90% at 100% 0%, rgb(156 227 125 / 0.22) 0%, transparent 60%),
+    linear-gradient(120deg, #3a1f55 0%, #4b296b 40%, #5f5878 72%, #77867f 100%);
+}
+
+@utility bg-grid-fine {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.07) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at 70% 40%, black 0%, transparent 70%);
+}
+
+@utility text-balance-safe {
+  text-wrap: balance;
+}
+
+@utility device-tilt {
+  transform: perspective(2200px) rotateY(-14deg) rotateX(5deg) rotateZ(0.6deg);
+  transform-style: preserve-3d;
+}
+
+@utility phone-tilt {
+  transform: perspective(1600px) rotateY(-10deg) rotateX(4deg) rotateZ(-2deg);
+}
+
+@utility stroke-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------- Shared component variables (defaults keep the original palette) ---------- */
+:root {
+  --btn-primary-bg: var(--color-lime);
+  --btn-primary-bg-hover: var(--color-lime-strong);
+  --btn-primary-fg: var(--color-ink);
+  --btn-primary-shadow: 0 10px 24px -12px rgb(120 200 90 / 0.9);
+  --map-land: #eef2ea;
+  --map-water: #cfe0ee;
+  --map-park: #dcebd3;
+}
+
+/* ---------- Corporate navy theme (homepage redesign) ---------- */
+[data-theme='navy'] {
+  --color-brand: #061a40;
+  --color-brand-2: #0e2a5c;
+  --color-brand-deep: #030f27;
+  --color-brand-soft: #eef2f7;
+  --color-olive: #56737f;
+  --color-sage: #678694;
+  --color-lime: #b5c3c9;
+  --color-lime-strong: #9dafb7;
+  --color-lime-soft: #edf1f3;
+  --color-lime-ink: #34505e;
+  --color-ink: #0a1a33;
+  --color-muted: #4d5662;
+  --color-line: #e3e8ec;
+  --color-surface: #f5f7f9;
+
+  --shadow-card: 0 1px 2px rgb(6 26 64 / 0.04), 0 12px 32px -20px rgb(6 26 64 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(6 26 64 / 0.04), 0 30px 60px -32px rgb(6 26 64 / 0.3);
+  --shadow-device: 0 60px 100px -50px rgb(6 26 64 / 0.55), 0 20px 40px -24px rgb(6 26 64 / 0.35);
+
+  --btn-primary-bg: var(--color-brand);
+  --btn-primary-bg-hover: var(--color-brand-2);
+  --btn-primary-fg: #fff;
+  --btn-primary-shadow: 0 12px 24px -16px rgb(6 26 64 / 0.7);
+  --map-land: #eef2f5;
+  --map-water: #d5e0e7;
+  --map-park: #e2e9ec;
+}
+
+@utility bg-navy {
+  background-color: #061a40;
+  background-image:
+    radial-gradient(90% 120% at 50% 0%, rgb(103 134 148 / 0.28) 0%, transparent 60%),
+    linear-gradient(180deg, #08204d 0%, #061a40 55%, #04132f 100%);
+}
+
+@utility bg-hero-light {
+  background-image:
+    radial-gradient(60% 55% at 50% 0%, rgb(181 195 201 / 0.28) 0%, transparent 70%),
+    linear-gradient(180deg, #fff 0%, #fff 100%);
+}
+
+@utility bg-grid-light {
+  background-image:
+    linear-gradient(rgb(6 26 64 / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(6 26 64 / 0.045) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 60% 70% at 50% 30%, black 0%, transparent 75%);
+}

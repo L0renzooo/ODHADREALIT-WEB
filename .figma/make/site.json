@@ -1,0 +1,10 @@
+{
+  "description": "Get an online estimate of your property’s value, explore selling and buyout options, and find market insights and support for homeowners and real estate professionals.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
