@@ -2,6 +2,8 @@ import { useEffect, type ComponentType } from "react"
 import { RouterProvider, scrollToId, useRouter } from "@/lib/router"
 import { Footer, Header } from "@/components/layout"
 import HomePage from "@/pages/HomePage"
+import { HomeHeader } from "@/components/home/HomeHeader"
+import "@/pages/home.css"
 import ValuationPage from "@/pages/ValuationPage"
 import {
   AboutPage,
@@ -19,7 +21,7 @@ type RouteDef = {
 
 const routes: Record<string, RouteDef> = {
   "/": { title: "Odhad ceny nehnuteľnosti online", component: HomePage },
-  "": { title: "Odhad ceny", component: ValuationPage },
+  "/odhad-ceny": { title: "Odhad ceny", component: ValuationPage },
   "/predaj-nehnutelnosti": {
     title: "Predaj nehnuteľnosti",
     component: SellPage,
@@ -37,6 +39,7 @@ function Shell() {
   const { pathname } = useRouter()
   const route = routes[pathname]
   const Page = route?.component ?? NotFoundPage
+  const home = pathname === "/"
 
   useEffect(() => {
     document.title = `${route?.title ?? "Stránka nenájdená"} · odhadrealit.sk`
@@ -52,7 +55,7 @@ function Shell() {
   return (
     <div
       className="flex min-h-screen flex-col"
-      data-theme="navy"
+      data-theme={home ? "home" : "navy"}
     >
       <a
         href="#obsah"
@@ -60,11 +63,11 @@ function Shell() {
       >
         Preskočiť na obsah
       </a>
-      <Header />
+      {home ? <HomeHeader /> : <Header />}
       <main id="obsah" key={pathname} className="flex-1">
         <Page />
       </main>
-      <Footer />
+      <Footer home={home} />
     </div>
   )
 }
