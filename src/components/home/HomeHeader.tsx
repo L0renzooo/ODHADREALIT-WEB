@@ -3,7 +3,6 @@ import { ArrowRight, ArrowUpRight, Menu, Search, X } from "lucide-react"
 import { AddressEntry, useHomeAddress } from "./HomeAddress"
 import { useStickyAddress } from "./useStickyAddress"
 import { Link } from "@/lib/router"
-import { mainNav } from "@/content"
 
 export function HomeLogo({ onClick }: { onClick?: () => void }) {
   return (
@@ -26,9 +25,9 @@ export function HomeLogo({ onClick }: { onClick?: () => void }) {
 }
 
 const links = [
-  { label: "Ako to funguje", to: "/#ako-to-funguje" },
-  { label: "Služby", to: "/#sluzby" },
-  ...mainNav.slice(3),
+  { label: "Odhad ceny", to: "/odhad-ceny" },
+  { label: "Predaj nehnuteľností", to: "/predaj-nehnutelnosti" },
+  { label: "Kontakt", to: "/kontakt" },
 ]
 
 export function HomeHeader() {
@@ -46,7 +45,7 @@ export function HomeHeader() {
   }, [past, expanded])
   useEffect(() => {
     if (!expanded) return
-    const narrow = matchMedia("(max-width: 600px)")
+    const narrow = matchMedia("(max-width: 700px)")
     const close = () => setExpanded(false)
     const outside = (event: PointerEvent | FocusEvent) => {
       if (
@@ -65,7 +64,7 @@ export function HomeHeader() {
     }
   }, [expanded])
   useEffect(() => {
-    const desktop = window.matchMedia("(min-width: 980px)")
+    const desktop = window.matchMedia("(min-width: 1024px)")
     const close = () => {
       if (desktop.matches) menu.current?.close()
     }
@@ -76,13 +75,6 @@ export function HomeHeader() {
     <header ref={header} className="home-header" data-compact={past}>
       <div className="home-nav-inner">
         <HomeLogo />
-        <nav aria-label="Hlavná navigácia" className="home-nav-links">
-          {links.map((link) => (
-            <Link key={link.to} to={link.to}>
-              {link.label}
-            </Link>
-          ))}
-        </nav>
         <div
           className="home-nav-action"
           ref={searchArea}
@@ -94,17 +86,6 @@ export function HomeHeader() {
             }
           }}
         >
-          <Link
-            className="home-button nav-cta"
-            to="/odhad-ceny"
-            aria-label="Odhad zdarma"
-            inert={past}
-          >
-            <span>
-              Odhad<span className="home-free"> zdarma</span>
-            </span>
-            <ArrowUpRight size={17} />
-          </Link>
           <button
             className="home-button home-search-toggle"
             ref={searchButton}
@@ -115,7 +96,7 @@ export function HomeHeader() {
             inert={!past}
             onClick={() => setExpanded(!expanded)}
           >
-            <Search size={17} /> Adresa
+            <Search size={17} />
           </button>
           <div
             className="home-sticky-entry"
@@ -125,15 +106,34 @@ export function HomeHeader() {
             <AddressEntry headerInput={field} />
           </div>
         </div>
-        <button
-          className="home-menu-toggle"
-          type="button"
-          aria-label="Otvoriť menu"
-          aria-haspopup="dialog"
-          onClick={() => menu.current?.showModal()}
-        >
-          <Menu size={22} />
-        </button>
+        <div className="home-nav-end">
+          <nav aria-label="Hlavná navigácia" className="home-nav-links">
+            {links.map((link) => (
+              <Link key={link.to} to={link.to}>
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          <Link
+            className="home-button nav-cta"
+            to="/odhad-ceny"
+            aria-label="Odhad zdarma"
+          >
+            <span>
+              Odhad<span className="home-free"> zdarma</span>
+            </span>
+            <ArrowUpRight size={17} />
+          </Link>
+          <button
+            className="home-menu-toggle"
+            type="button"
+            aria-label="Otvoriť menu"
+            aria-haspopup="dialog"
+            onClick={() => menu.current?.showModal()}
+          >
+            <Menu size={22} />
+          </button>
+        </div>
       </div>
       <dialog
         ref={menu}
@@ -153,15 +153,13 @@ export function HomeHeader() {
           </button>
         </div>
         <nav aria-label="Mobilná navigácia">
-          {[...links.slice(0, 2), ...mainNav].map((link) => (
+          {links.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               onClick={() => menu.current?.close()}
             >
-              {link.to === "/predaj-nehnutelnosti"
-                ? "Informácie pre predávajúcich"
-                : link.label}
+              {link.label}
               <ArrowRight size={18} />
             </Link>
           ))}

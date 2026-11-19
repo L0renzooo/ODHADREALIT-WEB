@@ -6,16 +6,16 @@ import houseSmall from "@/assets/home/house-720.webp"
 import interior from "@/assets/home/interior-1400.webp"
 import interiorSmall from "@/assets/home/interior-720.webp"
 
-import morning from "@/assets/home/morning-at-home-1920.webp"
-import morningSmall from "@/assets/home/morning-at-home-1100.webp"
-import morningMobile from "@/assets/home/morning-at-home-mobile.webp"
+import family from "@/assets/home/family-at-home-1916.webp"
+import familySmall from "@/assets/home/family-at-home-1100.webp"
+import familyMobile from "@/assets/home/family-at-home-mobile.webp"
 
 const frames = [
   {
-    image: morning,
-    small: morningSmall,
-    label: "Ráno doma",
-    alt: "Dvojica pri rannej káve v presvetlenej domácej kuchyni.",
+    image: family,
+    small: familySmall,
+    label: "Rodinné chvíle",
+    alt: "Rodičia sa hrajú s dvoma deťmi na pohovke pri okne v slnečnej obývačke.",
   },
   {
     image: house,
@@ -37,7 +37,11 @@ export function HomeHero() {
     setIndex((current) => (current + direction + frames.length) % frames.length)
   }
   return (
-    <section className="home-hero home-wide" aria-labelledby="home-title">
+    <section
+      className="home-hero home-wide"
+      data-family={index === 0}
+      aria-labelledby="home-title"
+    >
       <div className="home-hero-copy">
         <h1 id="home-title">
           <span className="home-title-line">Koľko stojí</span>{" "}
@@ -64,13 +68,13 @@ export function HomeHero() {
           {frames.map((frame, i) => (
             <picture key={frame.label}>
               {i === 0 && (
-                <source media="(max-width: 760px)" srcSet={morningMobile} />
+                <source media="(max-width: 600px)" srcSet={familyMobile} />
               )}
               <img
                 src={frame.image}
                 srcSet={`${frame.small} ${
                   i === 0 ? 1100 : 720
-                }w, ${frame.image} ${i === 0 ? 1920 : 1400}w`}
+                }w, ${frame.image} ${i === 0 ? 1916 : 1400}w`}
                 sizes="(min-width: 1650px) 1580px, 96vw"
                 alt={frame.alt}
                 aria-hidden={index !== i}
