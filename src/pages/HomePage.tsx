@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import { useRef, type ReactNode } from "react"
 import {
   ArrowDown,
   ArrowRight,
@@ -11,10 +11,36 @@ import { Accordion } from "@/components/ui"
 import { EstimateExample } from "@/components/home/EstimateExample"
 import { HomeHero } from "@/components/home/HomeHero"
 import { OwnershipSection } from "@/components/home/OwnershipSection"
+import { ValuationStory } from "@/components/home/ValuationStory"
+import BorderGlow from "@/components/home/react-bits/BorderGlow"
 import { useEditorialMotion } from "@/components/home/useEditorialMotion"
 import { faqs } from "@/content"
 import apartments from "@/assets/home/apartments-1100.webp"
 import apartmentsSmall from "@/assets/home/apartments-720.webp"
+
+function ServiceGlow({
+  light,
+  children,
+}: {
+  light?: boolean
+  children: ReactNode
+}) {
+  return (
+    <BorderGlow
+      backgroundColor={light ? "#e8eedf" : "#315a44"}
+      glowColor={light ? "132 42 44" : "84 91 76"}
+      colors={["#d0f883", "#80ac69", "#315a44"]}
+      borderRadius={16}
+      glowRadius={12}
+      glowIntensity={0.85}
+      edgeSensitivity={40}
+      coneSpread={17}
+      fillOpacity={0.12}
+    >
+      {children}
+    </BorderGlow>
+  )
+}
 
 function Services() {
   return (
@@ -30,40 +56,45 @@ function Services() {
         </Link>
       </div>
       <div className="home-services">
-        <Link to="/odhad-ceny" className="home-sale">
-          <img
-            className="home-image-reveal"
-            src={apartments}
-            srcSet={`${apartmentsSmall} 720w, ${apartments} 1100w`}
-            sizes="(max-width: 760px) 100vw, 55vw"
-            loading="lazy"
-            alt=""
-          />
-          <div className="home-service-content">
-            <h3>Odhad ceny nehnuteľnosti</h3>
-            <p>
-              Zistite orientačnú hodnotu svojej nehnuteľnosti jednoducho online.
-            </p>
-          </div>
-          <span className="home-round-arrow">
-            <ArrowUpRight />
-          </span>
-        </Link>
-        <Link to="/vykup-nehnutelnosti" className="home-buyout">
-          <div className="home-key" aria-hidden="true">
-            <KeyRound size={43} strokeWidth={1.25} />
-          </div>
-          <div className="home-service-content">
-            <h3>Priamy výkup</h3>
-            <p>
-              Zvažujete predaj? Požiadajte o individuálnu ponuku na priamy
-              výkup.
-            </p>
-          </div>
-          <span className="home-round-arrow">
-            <ArrowUpRight />
-          </span>
-        </Link>
+        <ServiceGlow>
+          <Link to="/odhad-ceny" className="home-sale">
+            <img
+              className="home-image-reveal"
+              src={apartments}
+              srcSet={`${apartmentsSmall} 720w, ${apartments} 1100w`}
+              sizes="(max-width: 760px) 100vw, 55vw"
+              loading="lazy"
+              alt=""
+            />
+            <div className="home-service-content">
+              <h3>Odhad ceny nehnuteľnosti</h3>
+              <p>
+                Zistite orientačnú hodnotu svojej nehnuteľnosti jednoducho
+                online.
+              </p>
+            </div>
+            <span className="home-round-arrow">
+              <ArrowUpRight />
+            </span>
+          </Link>
+        </ServiceGlow>
+        <ServiceGlow light>
+          <Link to="/vykup-nehnutelnosti" className="home-buyout">
+            <div className="home-key" aria-hidden="true">
+              <KeyRound size={43} strokeWidth={1.25} />
+            </div>
+            <div className="home-service-content">
+              <h3>Priamy výkup</h3>
+              <p>
+                Zvažujete predaj? Požiadajte o individuálnu ponuku na priamy
+                výkup.
+              </p>
+            </div>
+            <span className="home-round-arrow">
+              <ArrowUpRight />
+            </span>
+          </Link>
+        </ServiceGlow>
       </div>
       <Link className="home-broker" to="/pre-maklerov">
         <UsersRound size={24} strokeWidth={1.5} />
@@ -139,6 +170,7 @@ export default function HomePage() {
       <Services />
       <OwnershipSection />
       <ValuationGuide />
+      <ValuationStory />
       <section
         id="faq"
         className="home-faq home-section home-content"
