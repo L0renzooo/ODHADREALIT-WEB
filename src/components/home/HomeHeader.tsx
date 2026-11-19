@@ -1,5 +1,7 @@
-import { useEffect, useRef } from "react"
-import { ArrowRight, ArrowUpRight, Menu, X } from "lucide-react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { ArrowRight, ArrowUpRight, Menu, Search, X } from "lucide-react"
+import { AddressEntry, useHomeAddress } from "./HomeAddress"
+import { useStickyAddress } from "./useStickyAddress"
 import { Link } from "@/lib/router"
 import { mainNav } from "@/content"
 
@@ -31,6 +33,37 @@ const links = [
 
 export function HomeHeader() {
   const menu = useRef<HTMLDialogElement>(null)
+  const header = useRef<HTMLElement>(null)
+  const searchButton = useRef<HTMLButtonElement>(null)
+  const searchArea = useRef<HTMLDivElement>(null)
+  const field = useRef<HTMLInputElement>(null)
+  const { heroInput } = useHomeAddress()
+  const past = useStickyAddress(header, heroInput)
+  const [expanded, setExpanded] = useState(false)
+  useLayoutEffect(() => {
+    if (!past) setExpanded(false)
+    else if (expanded) field.current?.focus({ preventScroll: true })
+  }, [past, expanded])
+  useEffect(() => {
+    if (!expanded) return
+    const narrow = matchMedia("(max-width: 600px)")
+    const close = () => setExpanded(false)
+    const outside = (event: PointerEvent | FocusEvent) => {
+      if (
+        event.target instanceof Node &&
+        !searchArea.current?.contains(event.target)
+      )
+        close()
+    }
+    document.addEventListener("pointerdown", outside)
+    document.addEventListener("focusin", outside)
+    narrow.addEventListener("change", close)
+    return () => {
+      document.removeEventListener("pointerdown", outside)
+      document.removeEventListener("focusin", outside)
+      narrow.removeEventListener("change", close)
+    }
+  }, [expanded])
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 980px)")
     const close = () => {
@@ -40,7 +73,7 @@ export function HomeHeader() {
     return () => desktop.removeEventListener("change", close)
   }, [])
   return (
-    <header className="home-header">
+    <header ref={header} className="home-header" data-compact={past}>
       <div className="home-nav-inner">
         <HomeLogo />
         <nav aria-label="Hlavná navigácia" className="home-nav-links">
@@ -50,11 +83,22 @@ export function HomeHeader() {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div
+          className="home-nav-action"
+          ref={searchArea}
+          data-expanded={expanded}
+          onKeyDown={(event) => {
+            if (event.key === "Escape" && expanded) {
+              setExpanded(false)
+              searchButton.current?.focus()
+            }
+          }}
+        >
           <Link
             className="home-button nav-cta"
             to="/odhad-ceny"
             aria-label="Odhad zdarma"
+            inert={past}
           >
             <span>
               Odhad<span className="home-free"> zdarma</span>
@@ -62,15 +106,34 @@ export function HomeHeader() {
             <ArrowUpRight size={17} />
           </Link>
           <button
-            className="home-menu-toggle"
+            className="home-button home-search-toggle"
+            ref={searchButton}
             type="button"
-            aria-label="Otvoriť menu"
-            aria-haspopup="dialog"
-            onClick={() => menu.current?.showModal()}
+            aria-label="Vyhľadať adresu"
+            aria-expanded={expanded}
+            aria-controls="home-sticky-entry"
+            inert={!past}
+            onClick={() => setExpanded(!expanded)}
           >
-            <Menu size={22} />
+            <Search size={17} /> Adresa
           </button>
+          <div
+            className="home-sticky-entry"
+            id="home-sticky-entry"
+            inert={!past}
+          >
+            <AddressEntry headerInput={field} />
+          </div>
         </div>
+        <button
+          className="home-menu-toggle"
+          type="button"
+          aria-label="Otvoriť menu"
+          aria-haspopup="dialog"
+          onClick={() => menu.current?.showModal()}
+        >
+          <Menu size={22} />
+        </button>
       </div>
       <dialog
         ref={menu}

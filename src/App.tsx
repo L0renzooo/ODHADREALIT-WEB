@@ -3,6 +3,7 @@ import { RouterProvider, scrollToId, useRouter } from "@/lib/router"
 import { Footer, Header } from "@/components/layout"
 import HomePage from "@/pages/HomePage"
 import { HomeHeader } from "@/components/home/HomeHeader"
+import { HomeAddressProvider } from "@/components/home/HomeAddress"
 import "@/pages/home.css"
 import ValuationPage from "@/pages/ValuationPage"
 import {
@@ -52,7 +53,7 @@ function Shell() {
     if (id) requestAnimationFrame(() => scrollToId(id))
   }, [])
 
-  return (
+  const shell = (
     <div
       className="flex min-h-screen flex-col"
       data-theme={home ? "home" : "navy"}
@@ -70,6 +71,7 @@ function Shell() {
       <Footer home={home} />
     </div>
   )
+  return home ? <HomeAddressProvider>{shell}</HomeAddressProvider> : shell
 }
 
 export default function App() {

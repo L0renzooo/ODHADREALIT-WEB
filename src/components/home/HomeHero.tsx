@@ -1,12 +1,22 @@
-import { useRef, useState, type FormEvent } from "react"
+import { useState } from "react"
 import { ArrowLeft, ArrowRight, Check, MapPin } from "lucide-react"
-import { useRouter } from "@/lib/router"
+import { AddressEntry } from "./HomeAddress"
 import house from "@/assets/home/house-1400.webp"
 import houseSmall from "@/assets/home/house-720.webp"
 import interior from "@/assets/home/interior-1400.webp"
 import interiorSmall from "@/assets/home/interior-720.webp"
 
+import morning from "@/assets/home/morning-at-home-1920.webp"
+import morningSmall from "@/assets/home/morning-at-home-1100.webp"
+import morningMobile from "@/assets/home/morning-at-home-mobile.webp"
+
 const frames = [
+  {
+    image: morning,
+    small: morningSmall,
+    label: "Ráno doma",
+    alt: "Dvojica pri rannej káve v presvetlenej domácej kuchyni.",
+  },
   {
     image: house,
     small: houseSmall,
@@ -21,49 +31,6 @@ const frames = [
   },
 ]
 
-function AddressEntry() {
-  const { navigate } = useRouter()
-  const field = useRef<HTMLInputElement>(null)
-  const [error, setError] = useState(false)
-  function submit(event: FormEvent) {
-    event.preventDefault()
-    const address = field.current?.value.trim() ?? ""
-    if (address.length < 3) {
-      setError(true)
-      field.current?.focus()
-      return
-    }
-    navigate(`/odhad-ceny?adresa=${encodeURIComponent(address)}`)
-  }
-  return (
-    <form onSubmit={submit} className="home-entry" noValidate>
-      <label htmlFor="home-address" className="sr-only">
-        Adresa nehnuteľnosti
-      </label>
-      <div className="home-input-group">
-        <MapPin aria-hidden="true" size={21} />
-        <input
-          ref={field}
-          id="home-address"
-          autoComplete="street-address"
-          placeholder="Zadajte ulicu alebo obec"
-          onChange={() => setError(false)}
-          aria-invalid={error}
-          aria-describedby={error ? "home-address-error" : undefined}
-        />
-        <button type="submit">
-          Zistiť odhad <ArrowRight size={17} aria-hidden="true" />
-        </button>
-      </div>
-      {error && (
-        <p id="home-address-error" role="alert">
-          Zadajte aspoň tri znaky z názvu ulice alebo obce.
-        </p>
-      )}
-    </form>
-  )
-}
-
 export function HomeHero() {
   const [index, setIndex] = useState(0)
   function advance(direction: number) {
@@ -77,8 +44,7 @@ export function HomeHero() {
           <em className="home-title-line">váš domov?</em>
         </h1>
         <p className="home-hero-lead">
-          Získajte orientačný odhad trhovej hodnoty svojho bytu či domu. Začnite
-          jeho adresou.
+          Zistite orientačnú hodnotu svojej nehnuteľnosti jednoducho online.
         </p>
         <AddressEntry />
         <ul className="home-assurances">
@@ -96,16 +62,22 @@ export function HomeHero() {
           aria-label="Fotogaléria nehnuteľností"
         >
           {frames.map((frame, i) => (
-            <img
-              key={frame.label}
-              src={frame.image}
-              srcSet={`${frame.small} 720w, ${frame.image} 1400w`}
-              sizes="(max-width: 760px) 100vw, 52vw"
-              alt={frame.alt}
-              aria-hidden={index !== i}
-              fetchPriority={i === 0 ? "high" : "low"}
-              className={index === i ? "is-current" : ""}
-            />
+            <picture key={frame.label}>
+              {i === 0 && (
+                <source media="(max-width: 760px)" srcSet={morningMobile} />
+              )}
+              <img
+                src={frame.image}
+                srcSet={`${frame.small} ${
+                  i === 0 ? 1100 : 720
+                }w, ${frame.image} ${i === 0 ? 1920 : 1400}w`}
+                sizes="(min-width: 1650px) 1580px, 96vw"
+                alt={frame.alt}
+                aria-hidden={index !== i}
+                fetchPriority={i === 0 ? "high" : "low"}
+                className={index === i ? "is-current" : ""}
+              />
+            </picture>
           ))}
           <figcaption className="home-gallery-bar">
             <span aria-live="polite" aria-atomic="true">

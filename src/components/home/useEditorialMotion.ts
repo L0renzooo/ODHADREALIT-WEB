@@ -15,7 +15,7 @@ export function useEditorialMotion(root: RefObject<HTMLDivElement | null>) {
       entrance
         .fromTo(
           ".home-gallery-window",
-          { clipPath: "inset(0% 0% 0% 43%)" },
+          { clipPath: "inset(0% 0% 0% 5%)" },
           {
             clipPath: "inset(0% 0% 0% 0%)",
             duration: 1.2,
