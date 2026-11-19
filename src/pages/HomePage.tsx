@@ -12,6 +12,7 @@ import { EstimateExample } from "@/components/home/EstimateExample"
 import { HomeHero } from "@/components/home/HomeHero"
 import { OwnershipSection } from "@/components/home/OwnershipSection"
 import { ValuationStory } from "@/components/home/ValuationStory"
+import { SalesAssistance } from "@/components/home/SalesAssistance"
 import BorderGlow from "@/components/home/react-bits/BorderGlow"
 import { useEditorialMotion } from "@/components/home/useEditorialMotion"
 import { faqs } from "@/content"
@@ -124,38 +125,40 @@ function ValuationGuide() {
   return (
     <section
       id="ako-to-funguje"
-      className="home-guide home-wide"
+      className="home-wide"
       aria-labelledby="process-title"
     >
-      <div className="home-journey-heading">
-        <h2 id="process-title">
-          Ako funguje <em>odhad?</em>
-        </h2>
-        <Link to="/odhad-ceny" className="home-button dark-cta">
-          Začať odhad <ArrowRight size={17} />
-        </Link>
-      </div>
-      <div className="home-journey-body">
-        <ol className="home-steps">
-          {steps.map(([title, text], i) => (
-            <li key={title}>
-              {i < steps.length - 1 && (
-                <span aria-hidden="true" className="home-step-track">
-                  <i />
+      <div className="home-guide">
+        <div className="home-journey-heading">
+          <h2 id="process-title">
+            Ako funguje <em>odhad?</em>
+          </h2>
+          <Link to="/odhad-ceny" className="home-button dark-cta">
+            Začať odhad <ArrowRight size={17} />
+          </Link>
+        </div>
+        <div className="home-journey-body">
+          <ol className="home-steps">
+            {steps.map(([title, text], i) => (
+              <li key={title}>
+                {i < steps.length - 1 && (
+                  <span aria-hidden="true" className="home-step-track">
+                    <i />
+                  </span>
+                )}
+                <span className="home-step-dot" aria-hidden="true" />
+                <span className="home-step-number" aria-hidden="true">
+                  0{i + 1}
                 </span>
-              )}
-              <span className="home-step-dot" aria-hidden="true" />
-              <span className="home-step-number" aria-hidden="true">
-                0{i + 1}
-              </span>
-              <div className="home-step-copy">
-                <h3>{title}</h3>
-                <p>{text}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-        <EstimateExample />
+                <div className="home-step-copy">
+                  <h3>{title}</h3>
+                  <p>{text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <EstimateExample />
+        </div>
       </div>
     </section>
   )
@@ -170,6 +173,7 @@ export default function HomePage() {
       <Services />
       <OwnershipSection />
       <ValuationGuide />
+      <SalesAssistance />
       <ValuationStory />
       <section
         id="faq"

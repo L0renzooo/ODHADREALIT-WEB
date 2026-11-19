@@ -2,6 +2,7 @@ import { useLayoutEffect, type RefObject } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import Lenis from "lenis"
+import { animateSalesAssistance } from "./salesMotion"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -175,6 +176,7 @@ export function useEditorialMotion(root: RefObject<HTMLDivElement | null>) {
           )
       })
 
+      const restoreSalesNumbers = animateSalesAssistance(page)
       reveal("home-faq", ".home-faq > div:first-child")
         .from(".home-faq > div:first-child > *", { y: 23, opacity: 0.36 }, 0)
         .from(
@@ -182,6 +184,7 @@ export function useEditorialMotion(root: RefObject<HTMLDivElement | null>) {
           { y: 17, opacity: 0.58, stagger: 0.065 },
           0.08,
         )
+      return restoreSalesNumbers
     })
 
     media.add(
