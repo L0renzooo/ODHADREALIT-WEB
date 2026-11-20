@@ -1,102 +1,141 @@
 import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { formatSalesNumber } from "./salesMetrics"
 
-// Called inside the homepage's scoped, reduced-motion-aware GSAP context.
-export function animateSalesAssistance(page: HTMLElement) {
+export function animateSalesAssistance(
+  page: HTMLElement,
+  journey: ScrollTrigger,
+) {
   const section = page.querySelector<HTMLElement>(".sales-assistance")!
+  const stage = page.querySelector<HTMLElement>("#ako-to-funguje")!
   const guide = page.querySelector<HTMLElement>(".home-guide")!
-  const photo = section.querySelector<HTMLElement>(
-    ".sales-assistance-photo img",
-  )!
-  const travel = () =>
-    Math.min(
-      window.innerHeight * (window.innerWidth <= 800 ? 0.26 : 0.58),
-      guide.offsetHeight * 0.78,
-      section.offsetHeight * 0.78,
-    )
-
-  // Counteract the page scroll on the outgoing surface. The anchor and both
-  // sections' layout boxes stay in normal flow while the foreground covers it.
-  gsap.fromTo(guide, { y: 0, scale: 1 }, {
-    y: () => travel() * 0.96,
-    scale: () => (window.innerWidth <= 800 ? 0.99 : 0.97),
-    transformOrigin: "center top",
-    ease: "none",
-    scrollTrigger: {
-      id: "home-sales-cover",
-      trigger: section,
-      start: "top 91%",
-      end: () => "+=" + travel(),
-      scrub: true,
-      invalidateOnRefresh: true,
+  const header = document.querySelector<HTMLElement>(".home-header")!
+  const numbers = section.querySelectorAll<HTMLElement>("[data-sales-number]")
+  const renderNumbers = ({ progress }: ScrollTrigger) => {
+    const fraction = gsap.utils.clamp(0, 1, (progress - 0.3) / 0.56)
+    numbers.forEach((node) => {
+      node.textContent = formatSalesNumber(
+        Number(node.dataset.salesNumber) * fraction,
+      )
+    })
+  }
+  const coverEnd = () => {
+    const radius = parseFloat(getComputedStyle(section).borderTopLeftRadius)
+    return "top " + (header.offsetHeight - radius - 1) + "px"
+  }
+  // Hold the guide in its original reading position. Only the missing scroll
+  // distance goes below it, so tall mobile guides need no extra spacer.
+  const pin = ScrollTrigger.create({
+    id: "home-sales-cover",
+    trigger: stage,
+    start: () => {
+      const start =
+        stage.getBoundingClientRect().bottom +
+        window.scrollY -
+        window.innerHeight
+      const readingDistance = gsap.utils.clamp(
+        60,
+        140,
+        window.innerHeight * 0.16,
+      )
+      section.style.marginBlockStart =
+        Math.max(0, Math.ceil(journey.end + readingDistance - start)) + "px"
+      return start
     },
+    endTrigger: section,
+    end: coverEnd,
+    pin: guide,
+    pinSpacing: false,
   })
-
   const reveal = gsap.timeline({
     defaults: { ease: "none" },
     scrollTrigger: {
-      id: "home-sales-content",
       trigger: section,
-      start: "top 76%",
-      end: "top 23%",
+      start: "top bottom",
+      end: coverEnd,
       scrub: true,
+      // A fast wheel movement can cross the pause before the smoothed scrub settles.
+      onEnter: () => journey.getTween()?.progress(1),
+      onUpdate: renderNumbers,
+      onRefresh: renderNumbers,
     },
   })
+
   reveal
     .from(
-      section.querySelectorAll("h2 > *"),
-      { yPercent: 23, opacity: 0.38, stagger: 0.09, duration: 0.3 },
+      section.querySelector(".sales-assistance-photo img"),
+      {
+        clipPath: "inset(0 0 5% 0)",
+        scale: 1.025,
+        duration: 0.48,
+      },
       0,
     )
     .from(
-      section.querySelector(".sales-assistance-intro"),
-      { y: 11, opacity: 0.4, duration: 0.29 },
-      0.18,
+      section.querySelector("h2"),
+      { y: 14, opacity: 0.55, duration: 0.36 },
+      0.12,
     )
+    .from(
+      section.querySelector(".sales-assistance-intro"),
+      { y: 9, opacity: 0.6, duration: 0.32 },
+      0.22,
+    )
+    .from(
+      section.querySelector(".sales-assistance-cta"),
+      { y: 6, opacity: 0.7, duration: 0.28 },
+      0.32,
+    )
+
   const results = section.querySelector(".sales-assistance-results")
   if (results) {
-    reveal.from(results, { y: 9, opacity: 0.45, duration: 0.28 }, 0.35)
-    section
-      .querySelectorAll<HTMLElement>("[data-sales-number]")
-      .forEach((node) => {
-        const counter = { value: 0 }
-        node.textContent = formatSalesNumber(0)
-        reveal.to(
-          counter,
-          {
-            value: Number(node.dataset.salesNumber),
-            duration: 0.48,
-            onUpdate: () => {
-              node.textContent = formatSalesNumber(Math.round(counter.value))
-            },
-          },
-          0.37,
-        )
-      })
+    reveal.from(
+      results.children,
+      { y: 9, opacity: 0.55, stagger: 0.09, duration: 0.3 },
+      0.3,
+    )
   }
-  reveal.from(
-    section.querySelector(".sales-assistance-cta"),
-    { y: 8, opacity: 0.55, duration: 0.26 },
-    results ? 0.73 : 0.46,
-  )
-  gsap.from(photo, {
-    clipPath: "inset(0% 0% 12% 7%)",
-    scale: 1.035,
-    ease: "none",
-    scrollTrigger: {
-      id: "home-sales-photo",
-      trigger: photo.parentElement,
-      start: "top 84%",
-      end: "top 40%",
-      scrub: true,
-    },
+
+  // Native focus scrolling cannot see that the foreground covers a pinned control.
+  const showFocusedControl = (event: FocusEvent) => {
+    if (!pin.progress || !(event.target instanceof HTMLElement)) return
+    const control = event.target.getBoundingClientRect()
+    const headerBottom = header.getBoundingClientRect().bottom
+    if (
+      control.top >= headerBottom &&
+      control.bottom <= section.getBoundingClientRect().top
+    )
+      return
+    const offsetInGuide = control.top - guide.getBoundingClientRect().top
+    const naturalTop =
+      window.scrollY +
+      guide.parentElement!.getBoundingClientRect().top +
+      offsetInGuide
+    const centeredTop =
+      naturalTop - (headerBottom + window.innerHeight - control.height) / 2
+    window.scrollTo({
+      top: Math.min(pin.start - 1, centeredTop),
+      behavior: "instant",
+    })
+  }
+  guide.addEventListener("focusin", showFocusedControl)
+
+  // The example and the preceding story can reflow independently of a window resize.
+  let refreshFrame = 0
+  const resize = new ResizeObserver(() => {
+    cancelAnimationFrame(refreshFrame)
+    refreshFrame = requestAnimationFrame(() => ScrollTrigger.refresh())
   })
-  // Reverting GSAP restores styles. Restore the formatted text as well when
-  // someone enables reduced motion partway through the count.
-  return () =>
-    section
-      .querySelectorAll<HTMLElement>("[data-sales-number]")
-      .forEach((node) => {
-        node.textContent = formatSalesNumber(Number(node.dataset.salesNumber))
-      })
+  for (const node of page.querySelectorAll(".valuation-story, .sales-stack")) {
+    resize.observe(node)
+  }
+  return () => {
+    guide.removeEventListener("focusin", showFocusedControl)
+    resize.disconnect()
+    cancelAnimationFrame(refreshFrame)
+    section.style.removeProperty("margin-block-start")
+    numbers.forEach((node) => {
+      node.textContent = formatSalesNumber(Number(node.dataset.salesNumber))
+    })
+  }
 }

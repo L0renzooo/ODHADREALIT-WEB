@@ -171,10 +171,12 @@ export default function HomePage() {
     <div ref={root}>
       <HomeHero />
       <Services />
-      <OwnershipSection />
-      <ValuationGuide />
-      <SalesAssistance />
       <ValuationStory />
+      <div className="sales-stack">
+        <ValuationGuide />
+        <SalesAssistance />
+      </div>
+      <OwnershipSection />
       <section
         id="faq"
         className="home-faq home-section home-content"

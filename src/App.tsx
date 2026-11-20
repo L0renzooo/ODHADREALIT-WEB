@@ -1,8 +1,9 @@
 import { useEffect, type ComponentType } from "react"
-import { RouterProvider, scrollToId, useRouter } from "@/lib/router"
+import { Link, RouterProvider, scrollToId, useRouter } from "@/lib/router"
 import { Footer, Header } from "@/components/layout"
 import HomePage from "@/pages/HomePage"
-import { HomeHeader } from "@/components/home/HomeHeader"
+import { HomeHeader, HomeLogo } from "@/components/home/HomeHeader"
+import { ArrowUpRight } from "lucide-react"
 import { HomeAddressProvider } from "@/components/home/HomeAddress"
 import "@/pages/home.css"
 import ValuationPage from "@/pages/ValuationPage"
@@ -41,6 +42,7 @@ function Shell() {
   const route = routes[pathname]
   const Page = route?.component ?? NotFoundPage
   const home = pathname === "/"
+  const calculator = pathname === "/odhad-ceny"
 
   useEffect(() => {
     document.title = `${route?.title ?? "Stránka nenájdená"} · odhadrealit.sk`
@@ -56,7 +58,7 @@ function Shell() {
   const shell = (
     <div
       className="flex min-h-screen flex-col"
-      data-theme={home ? "home" : "navy"}
+      data-theme={home || calculator ? "home" : "navy"}
     >
       <a
         href="#obsah"
@@ -64,11 +66,24 @@ function Shell() {
       >
         Preskočiť na obsah
       </a>
-      {home ? <HomeHeader /> : <Header />}
+      {calculator ? (
+        <header className="calc-header">
+          <div>
+            <HomeLogo />
+            <Link to="/">
+              Späť na úvod <ArrowUpRight size={16} />
+            </Link>
+          </div>
+        </header>
+      ) : home ? (
+        <HomeHeader />
+      ) : (
+        <Header />
+      )}
       <main id="obsah" key={pathname} className="flex-1">
         <Page />
       </main>
-      <Footer home={home} />
+      <Footer home={home || calculator} />
     </div>
   )
   return home ? <HomeAddressProvider>{shell}</HomeAddressProvider> : shell

@@ -176,7 +176,10 @@ export function useEditorialMotion(root: RefObject<HTMLDivElement | null>) {
           )
       })
 
-      const restoreSalesNumbers = animateSalesAssistance(page)
+      const restoreSalesNumbers = animateSalesAssistance(
+        page,
+        journey.scrollTrigger!,
+      )
       reveal("home-faq", ".home-faq > div:first-child")
         .from(".home-faq > div:first-child > *", { y: 23, opacity: 0.36 }, 0)
         .from(

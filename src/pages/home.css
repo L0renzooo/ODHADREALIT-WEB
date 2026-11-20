@@ -128,6 +128,22 @@ html:has(.home-header) { scroll-padding-top: 0; }
  .home-hero-lead { margin-top: 14px; }
  .home-entry:not(.home-entry-compact) { margin-top: 18px; }
 }
+@media (max-width: 600px) {
+ .home-hero { grid-template-rows: 50px auto; }
+ .home-hero .home-gallery { position: absolute; grid-area: 1 / 1 / -1 / -1; }
+ .home-gallery-window picture:first-of-type img { object-position: 20% center; }
+ .home-gallery-window::after {
+   display: block;
+   background: linear-gradient(to bottom, rgb(10 30 21 / .62) 10%, rgb(10 30 21 / .62) 27%, transparent 37%, transparent 43%, rgb(10 30 21 / .73) 59%, rgb(10 30 21 / .84));
+ }
+ .home-hero[data-family=true] .home-gallery-window::after {
+   background: linear-gradient(to bottom, rgb(255 242 219 / .38) 11%, rgb(255 242 219 / .38) 27%, transparent 37%, transparent 43%, rgb(10 30 21 / .73) 59%, rgb(10 30 21 / .84));
+ }
+ .home-hero[data-family=true] :is(h1, h1 em) { color: var(--forest); }
+ .home-gallery-bar { inset: 0 0 auto; background: linear-gradient(rgb(8 25 18 / .54), transparent); }
+ .home-hero-copy { padding-block: 6px 26px; }
+ .home-hero-lead { margin-top: clamp(142px, 37vw, 216px); }
+}
 @media (min-width: 1024px) and (max-width: 1399px) {
  .home-nav-end, .home-nav-links { gap: 10px; }
  .home-nav-links a { font-size: .86rem; }
@@ -231,17 +247,17 @@ html:has(.home-header) { scroll-padding-top: 0; }
   .home-services, .home-faq { grid-template-columns: 1fr; }
   .home-services { gap: 12px; }
   .home-sale { min-height: 230px; }
-  .home-buyout { min-height: 180px; }
-  .home-key { top: 15px; }
-  .home-key svg { width: 32px; }
+  .home-buyout { min-height: 180px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-content: end; gap: 14px; }
+  .home-key { position: static; grid-column: 1 / -1; }
+  .home-key svg { width: 32px; height: 32px; }
+  .home-buyout .home-service-content { max-width: none; }
   .home-broker { display: grid; grid-template-columns: auto 1fr auto; column-gap: 12px; row-gap: 4px; }
   .home-broker span { grid-column: 2; font-size: .89rem; }
   .home-broker > svg:last-child { grid-column: 3; grid-row: 1 / 3; }
   .home-range-label { margin-top: 26px; }
   .home-faq { gap: 22px; }
   .home-faq > div:first-child p { display: inline-block; margin: 10px 8px 0 0; }
-  .home-footer-main { grid-template-columns: 1fr 1fr; }
-  .home-footer-main > div:first-child { grid-column: 1 / -1; }
+  .home-footer-main { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 480px) {
   .home-free { display: none; }

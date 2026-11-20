@@ -27,7 +27,8 @@ function readLocation() {
 type RouterValue = {
   pathname: string
   search: string
-  navigate: (to: string) => void
+  addressPrefill?: string
+  navigate: (to: string, addressPrefill?: string) => void
 }
 
 const RouterContext = createContext<RouterValue | null>(null)
@@ -50,7 +51,9 @@ export function scrollToId(id: string) {
 }
 
 export function RouterProvider({ children }: { children: ReactNode }) {
-  const [loc, setLoc] = useState(readLocation)
+  const [loc, setLoc] = useState<ReturnType<typeof readLocation> & {
+    addressPrefill?: string
+  }>(readLocation)
 
   useEffect(() => {
     const onPop = () => setLoc(readLocation())
@@ -58,7 +61,7 @@ export function RouterProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("popstate", onPop)
   }, [])
 
-  const navigate = useCallback((to: string) => {
+  const navigate = useCallback((to: string, addressPrefill?: string) => {
     const url = new URL(to, window.location.origin)
     const current = readLocation()
     const id = url.hash.slice(1)
@@ -80,7 +83,7 @@ export function RouterProvider({ children }: { children: ReactNode }) {
       "",
       `${BASE}${url.pathname}${url.search}${url.hash}`,
     )
-    setLoc(readLocation())
+    setLoc({ ...readLocation(), addressPrefill })
     requestAnimationFrame(() => {
       if (id) {
         requestAnimationFrame(() => scrollToId(id))
@@ -96,7 +99,12 @@ export function RouterProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const value = useMemo(
-    () => ({ pathname: loc.pathname, search: loc.search, navigate }),
+    () => ({
+      pathname: loc.pathname,
+      search: loc.search,
+      addressPrefill: loc.addressPrefill,
+      navigate,
+    }),
     [loc.pathname, loc.search, navigate],
   )
 

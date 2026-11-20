@@ -36,7 +36,7 @@ export function HomeAddressProvider({ children }: { children: ReactNode }) {
       setErrorSource(source)
       return false
     }
-    navigate("/odhad-ceny?adresa=" + encodeURIComponent(value))
+    navigate("/odhad-ceny", value)
     return true
   }
   return (
