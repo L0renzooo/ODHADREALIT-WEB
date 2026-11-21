@@ -1,7 +1,11 @@
 import { useEffect, type ComponentType } from "react"
-import { RouterProvider, scrollToId, useRouter } from "@/lib/router"
+import { Link, RouterProvider, scrollToId, useRouter } from "@/lib/router"
 import { Footer, Header } from "@/components/layout"
 import HomePage from "@/pages/HomePage"
+import { HomeHeader, HomeLogo } from "@/components/home/HomeHeader"
+import { ArrowUpRight } from "lucide-react"
+import { HomeAddressProvider } from "@/components/home/HomeAddress"
+import "@/pages/home.css"
 import ValuationPage from "@/pages/ValuationPage"
 import {
   AboutPage,
@@ -19,7 +23,7 @@ type RouteDef = {
 
 const routes: Record<string, RouteDef> = {
   "/": { title: "Odhad ceny nehnuteľnosti online", component: HomePage },
-  "": { title: "Odhad ceny", component: ValuationPage },
+  "/odhad-ceny": { title: "Odhad ceny", component: ValuationPage },
   "/predaj-nehnutelnosti": {
     title: "Predaj nehnuteľnosti",
     component: SellPage,
@@ -37,6 +41,8 @@ function Shell() {
   const { pathname } = useRouter()
   const route = routes[pathname]
   const Page = route?.component ?? NotFoundPage
+  const home = pathname === "/"
+  const calculator = pathname === "/odhad-ceny"
 
   useEffect(() => {
     document.title = `${route?.title ?? "Stránka nenájdená"} · odhadrealit.sk`
@@ -49,10 +55,10 @@ function Shell() {
     if (id) requestAnimationFrame(() => scrollToId(id))
   }, [])
 
-  return (
+  const shell = (
     <div
       className="flex min-h-screen flex-col"
-      data-theme="navy"
+      data-theme={home || calculator ? "home" : "navy"}
     >
       <a
         href="#obsah"
@@ -60,13 +66,27 @@ function Shell() {
       >
         Preskočiť na obsah
       </a>
-      <Header />
+      {calculator ? (
+        <header className="calc-header">
+          <div>
+            <HomeLogo />
+            <Link to="/">
+              Späť na úvod <ArrowUpRight size={16} />
+            </Link>
+          </div>
+        </header>
+      ) : home ? (
+        <HomeHeader />
+      ) : (
+        <Header />
+      )}
       <main id="obsah" key={pathname} className="flex-1">
         <Page />
       </main>
-      <Footer />
+      <Footer home={home || calculator} />
     </div>
   )
+  return home ? <HomeAddressProvider>{shell}</HomeAddressProvider> : shell
 }
 
 export default function App() {

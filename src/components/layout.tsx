@@ -13,6 +13,7 @@ import { Link, useRouter } from "@/lib/router"
 import { mainNav } from "@/content"
 import { Button, ButtonLink, cx } from "@/components/ui"
 import { LogoMark } from "@/components/visuals"
+import { HomeLogo } from "@/components/home/HomeHeader"
 
 export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
   return (
@@ -195,7 +196,7 @@ const legal = {
 
 type LegalKey = keyof typeof legal
 
-export function Footer() {
+export function Footer({ home = false }: { home?: boolean }) {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [doc, setDoc] = useState<LegalKey>("privacy")
   const openDoc = (k: LegalKey) => {
@@ -206,20 +207,33 @@ export function Footer() {
 
   const services = [
     { label: "Online odhad ceny", to: "/odhad-ceny" },
-    { label: "Predaj nehnuteľnosti", to: "/predaj-nehnutelnosti" },
+    ...(!home ? [{ label: "Predaj nehnuteľnosti", to: "/predaj-nehnutelnosti" }] : []),
     { label: "Výkup nehnuteľnosti", to: "/vykup-nehnutelnosti" },
-    { label: "Prehľad trhu", to: "/#prehlad-trhu" },
+    { label: home ? "Ukážka odhadu" : "Prehľad trhu", to: "/#prehlad-trhu" },
   ]
   const company = [
     { label: "O nás", to: "/o-nas" },
+    ...(home ? [{ label: "Informácie pre predávajúcich", to: "/predaj-nehnutelnosti" }] : []),
     { label: "Pre maklérov", to: "/pre-maklerov" },
     { label: "Časté otázky", to: "/#faq" },
     { label: "Kontakt", to: "/kontakt" },
   ]
 
   return (
-    <footer className="mt-auto bg-gradient-to-b from-white to-surface">
-      <div className="container-site">
+    <footer className={home ? "home-footer" : "mt-auto bg-gradient-to-b from-white to-surface"}>
+      {home ? (
+        <div className="home-content">
+          <div className="home-footer-main">
+            <div><HomeLogo /><a href="mailto:info@odhadrealit.sk">info@odhadrealit.sk</a><a href="tel:+421918832655">+421 918 832 655</a></div>
+            <FooterCol title="Služby" links={services} />
+            <FooterCol title="Spoločnosť" links={company} />
+          </div>
+          <div className="home-footer-base">
+            <p>© {new Date().getFullYear()} odhadrealit.sk</p>
+            <div>{(Object.keys(legal) as LegalKey[]).map(k => <button key={k} onClick={() => openDoc(k)}>{legal[k].title}</button>)}</div>
+          </div>
+        </div>
+      ) : <div className="container-site">
         <div className="grid gap-12 border-t border-line pt-14 pb-12 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.3fr] lg:gap-10">
           <div className="max-w-sm">
             <Logo />
@@ -284,7 +298,7 @@ export function Footer() {
             ))}
           </ul>
         </div>
-      </div>
+      </div>}
 
       <dialog
         ref={dialogRef}
@@ -314,7 +328,7 @@ export function Footer() {
           >
             {D.title}
           </h2>
-          <p className="mt-3 leading-relaxed text-muted">{D.body}</p>
+          <p className="mt-3 leading-relaxed text-muted">{home ? "Podrobnosti budú dostupné pri spustení služby." : D.body}</p>
           <Button
             variant="brand"
             className="mt-7"

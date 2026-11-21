@@ -35,8 +35,8 @@ export const mainNav = [
 
 export const faqs = [
   {
-    q: "Ako funguje online odhad nehnuteľnosti?",
-    a: "Zadáte lokalitu, typ nehnuteľnosti, výmeru a niekoľko základných parametrov. Na ich základe pripravíme orientačné cenové rozpätie, ktoré vám pomôže zorientovať sa. Nejde o znalecký posudok – je to prvý krok k lepšiemu prehľadu.",
+    q: "Nahrádza online odhad znalecký posudok?",
+    a: "Online odhad poskytuje orientačné cenové rozpätie podľa zadaných údajov. Ak potrebujete znalecký posudok, obráťte sa na znalca.",
   },
   {
     q: "Je odhad ceny nezáväzný?",
@@ -49,10 +49,6 @@ export const faqs = [
   {
     q: "Je výsledná cena garantovaná?",
     a: "Nie. Orientačný odhad nepredstavuje garantovanú predajnú cenu. Skutočná cena závisí od aktuálneho dopytu, technického stavu, právnych okolností a ďalších faktorov, ktoré je vhodné posúdiť individuálne.",
-  },
-  {
-    q: "Môžem požiadať aj o pomoc s predajom?",
-    a: "Áno. Ak zvažujete predaj, môžete nám zanechať nezáväzný dopyt. Ozveme sa vám, prejdeme vaše možnosti a navrhneme ďalší postup, ktorý zodpovedá vašej situácii.",
   },
   {
     q: "Ako funguje výkup nehnuteľnosti?",
